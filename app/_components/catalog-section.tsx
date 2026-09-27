@@ -16,7 +16,7 @@ type CatalogSectionProps = {
   items: CatalogItem[];
   selectedIds: string[];
   monitorQuantity: MonitorQuantity;
-  monitorLimit: 1 | 2;
+  monitorLimit: 0 | 1 | 2;
   onSelectionChange: (item: CatalogItem, selected: boolean) => void;
   onMonitorQuantityChange: (quantity: number) => void;
 };
@@ -73,11 +73,15 @@ export function CatalogSection({
                       {item.name}
                     </span>
                     <span className="shrink-0 rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-slate-600">
-                      {monitorQuantity}/{monitorLimit}
+                      {monitorLimit === 0
+                        ? "Choose desk"
+                        : `${monitorQuantity}/${monitorLimit}`}
                     </span>
                   </span>
                   <span className="mt-1 block text-xs leading-4 text-slate-500">
-                    {item.description} · max {monitorLimit} for this desk
+                    {monitorLimit === 0
+                      ? `${item.description} · choose a desk first`
+                      : `${item.description} · max ${monitorLimit} for this desk`}
                   </span>
                   <span className="mt-2 flex flex-wrap items-center justify-between gap-2">
                     <span className="text-sm font-bold text-emerald-800">
@@ -113,7 +117,11 @@ export function CatalogSection({
                         }
                         disabled={monitorQuantity === monitorLimit}
                         className="grid size-11 cursor-pointer place-items-center rounded-r-xl text-lg font-semibold text-slate-700 transition hover:bg-slate-100 focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700 disabled:cursor-not-allowed disabled:text-slate-300"
-                        aria-label={`Add one Focus Monitor, maximum ${monitorLimit}`}
+                        aria-label={
+                          monitorLimit === 0
+                            ? "Choose a desk before adding a Focus Monitor"
+                            : `Add one Focus Monitor, maximum ${monitorLimit}`
+                        }
                       >
                         +
                       </button>

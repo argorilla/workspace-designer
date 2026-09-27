@@ -35,7 +35,7 @@ export function updateConfiguration(
 export function updateMonitorQuantity(
   current: WorkspaceConfiguration,
   quantity: number,
-  monitorLimit: 1 | 2,
+  monitorLimit: 0 | 1 | 2,
 ): WorkspaceConfiguration {
   return {
     ...current,

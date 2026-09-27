@@ -19,7 +19,8 @@ body {
 }
 
 @media (min-width: 64rem) and (min-height: 48rem) {
-  .designer-sticky-panel {
+  .designer-sticky-panel,
+  .review-sticky-preview {
     position: sticky;
     top: 2rem;
   }

@@ -12,8 +12,12 @@ export const catalog: CatalogItem[] = [
 ];
 
 export const defaultConfiguration: WorkspaceConfiguration = {
-  deskId: "desk-oak",
-  chairId: "chair-task",
-  accessoryIds: ["lamp-arc", "plant-pothos"],
-  monitorQuantity: 1,
+  deskId: null,
+  chairId: null,
+  accessoryIds: [],
+  monitorQuantity: 0,
 };
+
+export function createEmptyConfiguration(): WorkspaceConfiguration {
+  return { ...defaultConfiguration, accessoryIds: [] };
+}

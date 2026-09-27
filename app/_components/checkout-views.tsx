@@ -1,5 +1,9 @@
 import type { RefObject } from "react";
-import type { CatalogItem, MonitorQuantity } from "../_lib/types";
+import type {
+  CatalogItem,
+  CompletedRentalSnapshot,
+  MonitorQuantity,
+} from "../_lib/types";
 
 type ConfirmationProps = {
   selectedItems: CatalogItem[];
@@ -119,11 +123,13 @@ export function CheckoutConfirmation({
 
 type ThankYouProps = {
   headingRef: RefObject<HTMLHeadingElement | null>;
+  snapshot: CompletedRentalSnapshot;
   onBackToDesigner: () => void;
 };
 
 export function CheckoutThankYou({
   headingRef,
+  snapshot,
   onBackToDesigner,
 }: ThankYouProps) {
   return (
@@ -153,12 +159,40 @@ export function CheckoutThankYou({
         in-app simulation: no payment was taken and no real order or request
         was processed by monis.rent.
       </p>
+      <div className="mx-auto mt-6 max-w-lg rounded-2xl bg-slate-50 px-4 py-4 text-left">
+        <p className="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">
+          Completed demo snapshot
+        </p>
+        <ul className="mt-2 space-y-1 text-sm text-slate-700">
+          {snapshot.selectedItems.map((item) => (
+            <li key={item.id} className="flex justify-between gap-3">
+              <span>
+                {item.name}
+                {item.kind === "monitor"
+                  ? ` × ${snapshot.configuration.monitorQuantity}`
+                  : ""}
+              </span>
+              <span className="shrink-0 font-medium">
+                $
+                {item.monthlyPrice *
+                  (item.kind === "monitor"
+                    ? snapshot.configuration.monitorQuantity
+                    : 1)}
+              </span>
+            </li>
+          ))}
+        </ul>
+        <div className="mt-3 flex justify-between gap-3 border-t border-slate-200 pt-3 font-semibold text-slate-950">
+          <span>Estimated monthly total</span>
+          <span>${snapshot.monthlyTotal}</span>
+        </div>
+      </div>
       <button
         type="button"
         onClick={onBackToDesigner}
         className="mt-8 inline-flex min-h-12 cursor-pointer items-center justify-center rounded-xl bg-emerald-900 px-6 text-sm font-semibold text-white transition hover:bg-emerald-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:ring-offset-2"
       >
-        Back to designer
+        Create a new setup
       </button>
     </section>
   );

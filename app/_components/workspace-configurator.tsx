@@ -1,12 +1,16 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { catalog, defaultConfiguration } from "../_lib/catalog";
+import { catalog, createEmptyConfiguration } from "../_lib/catalog";
 import {
   updateConfiguration,
   updateMonitorQuantity,
 } from "../_lib/configuration";
-import type { CatalogItem, WorkspaceConfiguration } from "../_lib/types";
+import type {
+  CatalogItem,
+  CompletedRentalSnapshot,
+  WorkspaceConfiguration,
+} from "../_lib/types";
 import { CatalogSection } from "./catalog-section";
 import { CheckoutConfirmation, CheckoutThankYou } from "./checkout-views";
 import { WorkspacePreview } from "./workspace-preview";
@@ -17,14 +21,17 @@ type ConfiguratorView = "designer" | "review" | "confirmation" | "thank-you";
 
 export function WorkspaceConfigurator() {
   const [configuration, setConfiguration] = useState<WorkspaceConfiguration>(
-    defaultConfiguration,
+    createEmptyConfiguration,
   );
   const [view, setView] = useState<ConfiguratorView>("designer");
   const [isConfirming, setIsConfirming] = useState(false);
   const [configurationMessage, setConfigurationMessage] = useState("");
+  const [completedSnapshot, setCompletedSnapshot] =
+    useState<CompletedRentalSnapshot | null>(null);
   const reviewHeadingRef = useRef<HTMLHeadingElement>(null);
   const confirmationHeadingRef = useRef<HTMLHeadingElement>(null);
   const thankYouHeadingRef = useRef<HTMLHeadingElement>(null);
+  const designerHeadingRef = useRef<HTMLHeadingElement>(null);
   const reviewButtonRef = useRef<HTMLButtonElement>(null);
   const confirmationTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
     null,
@@ -35,16 +42,17 @@ export function WorkspaceConfigurator() {
     configuration.deskId,
     configuration.chairId,
     ...configuration.accessoryIds,
-  ];
+  ].filter((id): id is string => id !== null);
   const monitor = catalog.find((item) => item.kind === "monitor")!;
   const selectedItems = catalog.filter(
     (item) =>
       selectedIds.includes(item.id) ||
       (item.kind === "monitor" && configuration.monitorQuantity > 0),
   );
-  const desk = catalog.find((item) => item.id === configuration.deskId)!;
-  const chair = catalog.find((item) => item.id === configuration.chairId)!;
-  const monitorLimit = desk.maxMonitorQuantity ?? 1;
+  const desk = catalog.find((item) => item.id === configuration.deskId);
+  const chair = catalog.find((item) => item.id === configuration.chairId);
+  const monitorLimit = desk?.maxMonitorQuantity ?? 0;
+  const canReview = Boolean(desk && chair);
   const accessories = catalog.filter((item) =>
     configuration.accessoryIds.includes(item.id),
   );
@@ -68,7 +76,11 @@ export function WorkspaceConfigurator() {
     } else if (view === "thank-you") {
       thankYouHeadingRef.current?.focus();
     } else {
-      reviewButtonRef.current?.focus();
+      if (reviewButtonRef.current && !reviewButtonRef.current.disabled) {
+        reviewButtonRef.current.focus();
+      } else {
+        designerHeadingRef.current?.focus();
+      }
     }
   }, [view]);
 
@@ -90,10 +102,22 @@ export function WorkspaceConfigurator() {
       return;
     }
 
+    const processedSnapshot: CompletedRentalSnapshot = {
+      configuration: {
+        ...configuration,
+        accessoryIds: [...configuration.accessoryIds],
+      },
+      selectedItems: [...selectedItems],
+      monthlyTotal,
+    };
+
     setIsConfirming(true);
     confirmationTimerRef.current = setTimeout(() => {
       confirmationTimerRef.current = null;
       setIsConfirming(false);
+      setCompletedSnapshot(processedSnapshot);
+      setConfiguration(createEmptyConfiguration());
+      setConfigurationMessage("");
       changeView("thank-you");
     }, 900);
   }
@@ -122,7 +146,7 @@ export function WorkspaceConfigurator() {
     );
   }
 
-  if (view === "review") {
+  if (view === "review" && desk && chair) {
     return (
       <WorkspaceReview
         desk={desk}
@@ -153,11 +177,15 @@ export function WorkspaceConfigurator() {
     );
   }
 
-  if (view === "thank-you") {
+  if (view === "thank-you" && completedSnapshot) {
     return (
       <CheckoutThankYou
         headingRef={thankYouHeadingRef}
-        onBackToDesigner={() => changeView("designer")}
+        snapshot={completedSnapshot}
+        onBackToDesigner={() => {
+          setCompletedSnapshot(null);
+          changeView("designer");
+        }}
       />
     );
   }
@@ -214,7 +242,11 @@ export function WorkspaceConfigurator() {
               <p className="text-xs font-bold uppercase tracking-[0.16em] text-emerald-800">
                 Current selection
               </p>
-              <h2 className="mt-1 text-xl font-semibold tracking-tight">
+              <h2
+                ref={designerHeadingRef}
+                tabIndex={-1}
+                className="mt-1 text-xl font-semibold tracking-tight outline-none"
+              >
                 Your monthly workspace
               </h2>
             </div>
@@ -231,6 +263,11 @@ export function WorkspaceConfigurator() {
             className="mt-5 grid grid-cols-1 gap-x-5 gap-y-2 border-t border-slate-100 pt-4 text-sm text-slate-600 sm:grid-cols-2"
             aria-label="Selected workspace items"
           >
+            {selectedItems.length === 0 && (
+              <li className="text-sm leading-5 text-slate-500 sm:col-span-2">
+                No items selected yet. Choose a desk and chair to begin.
+              </li>
+            )}
             {selectedItems.map((item) => (
               <li key={item.id} className="flex justify-between gap-3">
                 <span className="min-w-0">
@@ -260,10 +297,18 @@ export function WorkspaceConfigurator() {
             ref={reviewButtonRef}
             type="button"
             onClick={() => changeView("review")}
-            className="mt-6 inline-flex min-h-12 w-full items-center justify-center rounded-xl cursor-pointer bg-emerald-900 px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:ring-offset-2"
+            disabled={!canReview}
+            className="mt-6 inline-flex min-h-12 w-full cursor-pointer items-center justify-center rounded-xl bg-emerald-900 px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-600 disabled:shadow-none"
           >
             Review your setup
           </button>
+          {!canReview && (
+            <p className="mt-3 text-center text-xs leading-5 text-slate-500">
+              {desk || chair
+                ? `Choose a ${desk ? "chair" : "desk"} before reviewing your setup.`
+                : "Choose one desk and one chair before reviewing your setup."}
+            </p>
+          )}
         </div>
       </aside>
     </div>

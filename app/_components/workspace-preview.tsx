@@ -1,8 +1,8 @@
 import type { CatalogItem, MonitorQuantity } from "../_lib/types";
 
 type WorkspacePreviewProps = {
-  desk: CatalogItem;
-  chair: CatalogItem;
+  desk?: CatalogItem;
+  chair?: CatalogItem;
   accessories: CatalogItem[];
   monitorQuantity: MonitorQuantity;
 };
@@ -13,6 +13,36 @@ export function WorkspacePreview({
   accessories,
   monitorQuantity,
 }: WorkspacePreviewProps) {
+  if (!desk || !chair) {
+    const instruction =
+      !desk && !chair
+        ? "Choose a desk and chair to start building your workspace."
+        : !desk
+          ? "Choose a desk to complete your workspace foundation."
+          : "Choose a chair to complete your workspace foundation.";
+
+    return (
+      <div
+        className="relative flex aspect-[4/3] min-h-80 w-full items-center justify-center overflow-hidden rounded-[1.75rem] bg-[#e8ece7] px-6 text-center"
+        role="img"
+        aria-label={`Empty workspace preview. ${instruction}`}
+      >
+        <div className="absolute inset-x-0 bottom-0 h-[33%] bg-[#d6c8b6]" />
+        <div className="absolute left-[12%] top-[13%] h-[28%] w-[21%] rounded-t-full border-[9px] border-white/70 bg-[#b9d0c6]" />
+        <div className="absolute right-[10%] top-[12%] h-[27%] w-[18%] rounded-full bg-white/40" />
+        <div className="relative z-10 max-w-sm rounded-2xl border border-white/80 bg-white/90 px-5 py-6 shadow-sm backdrop-blur-sm">
+          <span className="mx-auto grid size-12 place-items-center rounded-full bg-emerald-100 text-2xl text-emerald-900" aria-hidden="true">
+            +
+          </span>
+          <p className="mt-3 text-base font-semibold text-slate-900">
+            Your workspace starts here
+          </p>
+          <p className="mt-2 text-sm leading-5 text-slate-600">{instruction}</p>
+        </div>
+      </div>
+    );
+  }
+
   const hasLamp = accessories.some((item) => item.kind === "lamp");
   const hasPlant = accessories.some((item) => item.kind === "plant");
   const isStudioDesk = desk.id === "desk-white";

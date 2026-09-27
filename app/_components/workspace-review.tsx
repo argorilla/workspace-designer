@@ -72,7 +72,7 @@ export function WorkspaceReview({
             id="review-heading"
             ref={headingRef}
             tabIndex={-1}
-            className="text-3xl font-semibold tracking-[-0.035em] text-slate-950 outline-none cursor-pointer sm:text-4xl"
+            className="text-3xl font-semibold tracking-[-0.035em] text-slate-950 outline-none sm:text-4xl"
           >
             Review your workspace
           </h2>
@@ -91,12 +91,14 @@ export function WorkspaceReview({
       </div>
 
       <div className="grid min-w-0 grid-cols-[minmax(0,1fr)] items-start gap-8 lg:grid-cols-[minmax(0,0.9fr)_minmax(420px,1.1fr)] xl:gap-12">
-        <WorkspacePreview
-          desk={desk}
-          chair={chair}
-          accessories={accessories}
-          monitorQuantity={monitorQuantity}
-        />
+        <div className="review-sticky-preview min-w-0">
+          <WorkspacePreview
+            desk={desk}
+            chair={chair}
+            accessories={accessories}
+            monitorQuantity={monitorQuantity}
+          />
+        </div>
 
         <div className="min-w-0 rounded-[1.75rem] border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
           <div className="flex flex-col items-start gap-3 border-b border-slate-100 pb-5 sm:flex-row sm:justify-between sm:gap-5">
@@ -169,7 +171,7 @@ export function WorkspaceReview({
           <button
             type="button"
             onClick={onRent}
-            className="mt-4 inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-emerald-900 px-5 text-center text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:ring-offset-2"
+            className="mt-4 inline-flex min-h-12 w-full cursor-pointer items-center justify-center rounded-xl bg-emerald-900 px-5 text-center text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:ring-offset-2"
           >
             Rent this setup
           </button>

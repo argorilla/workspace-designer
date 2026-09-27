@@ -18,8 +18,14 @@ export type CatalogItem = {
   maxMonitorQuantity?: 1 | 2;
 };
 export type WorkspaceConfiguration = {
-  deskId: CatalogItem["id"];
-  chairId: CatalogItem["id"];
+  deskId: CatalogItem["id"] | null;
+  chairId: CatalogItem["id"] | null;
   accessoryIds: CatalogItem["id"][];
   monitorQuantity: MonitorQuantity;
+};
+
+export type CompletedRentalSnapshot = {
+  configuration: WorkspaceConfiguration;
+  selectedItems: CatalogItem[];
+  monthlyTotal: number;
 };
