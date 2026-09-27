@@ -128,7 +128,7 @@ export function WorkspaceConfigurator() {
             ref={reviewButtonRef}
             type="button"
             onClick={() => changeView("review")}
-            className="mt-6 inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-emerald-900 px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:ring-offset-2"
+            className="mt-6 inline-flex min-h-12 w-full items-center justify-center rounded-xl cursor-pointer bg-emerald-900 px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:ring-offset-2"
           >
             Review your setup
           </button>

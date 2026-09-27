@@ -68,7 +68,7 @@ export function WorkspacePreview({
       )}
 
       {hasLamp && (
-        <div className="absolute right-[21%] top-[20%] h-[27%] w-[18%] drop-shadow-lg">
+        <div className="absolute right-[5%] top-[20%] h-[27%] w-[18%] drop-shadow-lg">
           <div className="absolute bottom-0 left-[12%] h-[5%] w-[65%] rounded-full bg-[#273632]" />
           <div className="absolute bottom-[4%] left-[42%] h-[67%] w-[7%] origin-bottom -rotate-[20deg] rounded-full bg-[#273632]" />
           <div className="absolute left-[31%] top-[3%] h-[33%] w-[53%] -rotate-[10deg] rounded-t-full rounded-br-full bg-[#d79a45]" />

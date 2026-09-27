@@ -54,7 +54,7 @@ export function WorkspaceReview({
             id="review-heading"
             ref={headingRef}
             tabIndex={-1}
-            className="text-3xl font-semibold tracking-[-0.035em] text-slate-950 outline-none sm:text-4xl"
+            className="text-3xl font-semibold tracking-[-0.035em] text-slate-950 outline-none cursor-pointer sm:text-4xl"
           >
             Review your workspace
           </h2>
@@ -66,7 +66,7 @@ export function WorkspaceReview({
         <button
           type="button"
           onClick={onBack}
-          className="inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-300 bg-white px-5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-emerald-700 hover:text-emerald-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:ring-offset-2"
+          className="inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-300 bg-white px-5 text-sm font-semibold text-slate-700 shadow-sm transition cursor-pointer hover:border-emerald-700 hover:text-emerald-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:ring-offset-2"
         >
           Back to designer
         </button>
