@@ -1,0 +1,60 @@
+name: Deploy to Vercel
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: vercel-production
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Validate and deploy production
+    runs-on: ubuntu-latest
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: 11.5.2
+          run_install: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm exec tsc --noEmit
+
+      - name: Install Vercel CLI
+        run: pnpm add --global vercel@latest
+
+      - name: Pull Vercel production configuration
+        run: vercel pull --yes --environment=production --token="${{ secrets.VERCEL_TOKEN }}"
+
+      - name: Build production artifact
+        run: vercel build --prod --token="${{ secrets.VERCEL_TOKEN }}"
+
+      - name: Deploy production artifact
+        run: vercel deploy --prebuilt --prod --token="${{ secrets.VERCEL_TOKEN }}"
