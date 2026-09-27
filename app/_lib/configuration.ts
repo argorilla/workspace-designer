@@ -1,4 +1,8 @@
-import type { CatalogItem, WorkspaceConfiguration } from "./types";
+import type {
+  CatalogItem,
+  MonitorQuantity,
+  WorkspaceConfiguration,
+} from "./types";
 
 export function updateConfiguration(
   current: WorkspaceConfiguration,
@@ -6,7 +10,15 @@ export function updateConfiguration(
   selected: boolean,
 ): WorkspaceConfiguration {
   if (item.category === "desk") {
-    return { ...current, deskId: item.id };
+    const monitorLimit = item.maxMonitorQuantity ?? 1;
+    return {
+      ...current,
+      deskId: item.id,
+      monitorQuantity: Math.min(
+        current.monitorQuantity,
+        monitorLimit,
+      ) as MonitorQuantity,
+    };
   }
 
   if (item.category === "chair") {
@@ -18,4 +30,18 @@ export function updateConfiguration(
     : current.accessoryIds.filter((id) => id !== item.id);
 
   return { ...current, accessoryIds: [...new Set(accessoryIds)] };
+}
+
+export function updateMonitorQuantity(
+  current: WorkspaceConfiguration,
+  quantity: number,
+  monitorLimit: 1 | 2,
+): WorkspaceConfiguration {
+  return {
+    ...current,
+    monitorQuantity: Math.max(
+      0,
+      Math.min(quantity, monitorLimit),
+    ) as MonitorQuantity,
+  };
 }

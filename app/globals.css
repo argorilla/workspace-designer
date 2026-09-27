@@ -17,3 +17,10 @@ body {
   color: var(--foreground);
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
 }
+
+@media (min-width: 64rem) and (min-height: 48rem) {
+  .designer-sticky-panel {
+    position: sticky;
+    top: 2rem;
+  }
+}

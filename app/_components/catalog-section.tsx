@@ -1,4 +1,8 @@
-import type { CatalogCategory, CatalogItem } from "../_lib/types";
+import type {
+  CatalogCategory,
+  CatalogItem,
+  MonitorQuantity,
+} from "../_lib/types";
 import { ItemIcon } from "./item-icon";
 
 const categoryLabels: Record<CatalogCategory, string> = {
@@ -11,14 +15,20 @@ type CatalogSectionProps = {
   category: CatalogCategory;
   items: CatalogItem[];
   selectedIds: string[];
+  monitorQuantity: MonitorQuantity;
+  monitorLimit: 1 | 2;
   onSelectionChange: (item: CatalogItem, selected: boolean) => void;
+  onMonitorQuantityChange: (quantity: number) => void;
 };
 
 export function CatalogSection({
   category,
   items,
   selectedIds,
+  monitorQuantity,
+  monitorLimit,
   onSelectionChange,
+  onMonitorQuantityChange,
 }: CatalogSectionProps) {
   const isSingleChoice = category !== "accessory";
 
@@ -43,6 +53,76 @@ export function CatalogSection({
       <div className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-3 sm:grid-cols-2">
         {items.map((item) => {
           const isSelected = selectedIds.includes(item.id);
+
+          if (item.kind === "monitor") {
+            return (
+              <article
+                key={item.id}
+                className={`grid min-h-28 min-w-0 max-w-full grid-cols-[72px_minmax(0,1fr)] items-center gap-3 rounded-2xl border p-3 transition sm:grid-cols-[88px_minmax(0,1fr)] ${
+                  monitorQuantity > 0
+                    ? "border-emerald-700 bg-emerald-50/60 ring-1 ring-emerald-700"
+                    : "border-slate-200 bg-white"
+                }`}
+              >
+                <span className="flex h-18 items-center justify-center rounded-xl bg-[#f1f0eb] p-2 sm:h-20">
+                  <ItemIcon kind={item.kind} color={item.color} />
+                </span>
+                <span className="min-w-0">
+                  <span className="flex min-w-0 items-start justify-between gap-2">
+                    <span className="min-w-0 text-sm font-semibold leading-5 text-slate-900">
+                      {item.name}
+                    </span>
+                    <span className="shrink-0 rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-slate-600">
+                      {monitorQuantity}/{monitorLimit}
+                    </span>
+                  </span>
+                  <span className="mt-1 block text-xs leading-4 text-slate-500">
+                    {item.description} · max {monitorLimit} for this desk
+                  </span>
+                  <span className="mt-2 flex flex-wrap items-center justify-between gap-2">
+                    <span className="text-sm font-bold text-emerald-800">
+                      ${item.monthlyPrice}/mo each
+                    </span>
+                    <span
+                      className="inline-flex items-center rounded-xl border border-slate-200 bg-white shadow-sm"
+                      role="group"
+                      aria-label="Focus Monitor quantity"
+                    >
+                      <button
+                        type="button"
+                        onClick={() =>
+                          onMonitorQuantityChange(monitorQuantity - 1)
+                        }
+                        disabled={monitorQuantity === 0}
+                        className="grid size-11 cursor-pointer place-items-center rounded-l-xl text-lg font-semibold text-slate-700 transition hover:bg-slate-100 focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700 disabled:cursor-not-allowed disabled:text-slate-300"
+                        aria-label="Remove one Focus Monitor"
+                      >
+                        −
+                      </button>
+                      <output
+                        className="min-w-9 text-center text-sm font-bold text-slate-900"
+                        aria-live="polite"
+                        aria-atomic="true"
+                      >
+                        {monitorQuantity}
+                      </output>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          onMonitorQuantityChange(monitorQuantity + 1)
+                        }
+                        disabled={monitorQuantity === monitorLimit}
+                        className="grid size-11 cursor-pointer place-items-center rounded-r-xl text-lg font-semibold text-slate-700 transition hover:bg-slate-100 focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700 disabled:cursor-not-allowed disabled:text-slate-300"
+                        aria-label={`Add one Focus Monitor, maximum ${monitorLimit}`}
+                      >
+                        +
+                      </button>
+                    </span>
+                  </span>
+                </span>
+              </article>
+            );
+          }
 
           return (
             <label

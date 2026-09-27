@@ -1,5 +1,5 @@
 import type { RefObject } from "react";
-import type { CatalogItem } from "../_lib/types";
+import type { CatalogItem, MonitorQuantity } from "../_lib/types";
 import { ItemIcon } from "./item-icon";
 import { WorkspacePreview } from "./workspace-preview";
 
@@ -7,13 +7,22 @@ type WorkspaceReviewProps = {
   desk: CatalogItem;
   chair: CatalogItem;
   accessories: CatalogItem[];
+  monitor: CatalogItem;
+  monitorQuantity: MonitorQuantity;
   selectedItems: CatalogItem[];
   monthlyTotal: number;
   headingRef: RefObject<HTMLHeadingElement | null>;
   onBack: () => void;
+  onRent: () => void;
 };
 
-function ReviewItem({ item }: { item: CatalogItem }) {
+function ReviewItem({
+  item,
+  quantity = 1,
+}: {
+  item: CatalogItem;
+  quantity?: number;
+}) {
   return (
     <li className="grid min-w-0 grid-cols-[56px_minmax(0,1fr)] items-center gap-x-3 gap-y-1 rounded-2xl border border-slate-200 bg-white p-3 sm:grid-cols-[64px_minmax(0,1fr)] sm:gap-x-4 sm:p-4">
       <span className="row-span-2 flex size-14 items-center justify-center rounded-xl bg-[#f1f0eb] p-2 sm:size-16">
@@ -21,14 +30,16 @@ function ReviewItem({ item }: { item: CatalogItem }) {
       </span>
       <span className="min-w-0 flex-1">
         <span className="block text-sm font-semibold text-slate-900">
-          {item.name}
+          {item.name}{item.kind === "monitor" ? ` × ${quantity}` : ""}
         </span>
         <span className="mt-1 block text-xs text-slate-500">
           {item.description}
         </span>
       </span>
       <span className="col-start-2 text-sm font-bold text-emerald-800">
-        ${item.monthlyPrice}/mo
+        {item.kind === "monitor"
+          ? `$${item.monthlyPrice} per unit · $${item.monthlyPrice * quantity}/mo`
+          : `$${item.monthlyPrice}/mo`}
       </span>
     </li>
   );
@@ -38,11 +49,18 @@ export function WorkspaceReview({
   desk,
   chair,
   accessories,
+  monitor,
+  monitorQuantity,
   selectedItems,
   monthlyTotal,
   headingRef,
   onBack,
+  onRent,
 }: WorkspaceReviewProps) {
+  const reviewAccessories = [
+    ...(monitorQuantity > 0 ? [monitor] : []),
+    ...accessories,
+  ];
   return (
     <section aria-labelledby="review-heading" className="min-w-0">
       <div className="mb-8 flex flex-col items-start justify-between gap-5 sm:flex-row sm:items-end">
@@ -73,7 +91,12 @@ export function WorkspaceReview({
       </div>
 
       <div className="grid min-w-0 grid-cols-[minmax(0,1fr)] items-start gap-8 lg:grid-cols-[minmax(0,0.9fr)_minmax(420px,1.1fr)] xl:gap-12">
-        <WorkspacePreview desk={desk} chair={chair} accessories={accessories} />
+        <WorkspacePreview
+          desk={desk}
+          chair={chair}
+          accessories={accessories}
+          monitorQuantity={monitorQuantity}
+        />
 
         <div className="min-w-0 rounded-[1.75rem] border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
           <div className="flex flex-col items-start gap-3 border-b border-slate-100 pb-5 sm:flex-row sm:justify-between sm:gap-5">
@@ -117,10 +140,16 @@ export function WorkspaceReview({
               >
                 Accessories
               </h4>
-              {accessories.length > 0 ? (
+              {reviewAccessories.length > 0 ? (
                 <ul className="space-y-3">
-                  {accessories.map((item) => (
-                    <ReviewItem key={item.id} item={item} />
+                  {reviewAccessories.map((item) => (
+                    <ReviewItem
+                      key={item.id}
+                      item={item}
+                      quantity={
+                        item.kind === "monitor" ? monitorQuantity : 1
+                      }
+                    />
                   ))}
                 </ul>
               ) : (
@@ -132,9 +161,22 @@ export function WorkspaceReview({
           </div>
 
           <div className="mt-6 rounded-2xl bg-emerald-50 px-4 py-4 text-sm leading-6 text-emerald-950">
-            Prices are estimated monthly rental rates. Final pricing may vary
-            based on availability and delivery location.
+            This coding-challenge demo uses illustrative products and prices.
+            It is not the official monis.rent catalog or a final rental offer.
+            Availability, final pricing, rental duration, and delivery must be
+            confirmed directly with monis.rent.
           </div>
+          <button
+            type="button"
+            onClick={onRent}
+            className="mt-4 inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-emerald-900 px-5 text-center text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:ring-offset-2"
+          >
+            Rent this setup
+          </button>
+          <p className="mt-3 text-center text-xs leading-5 text-slate-500">
+            Continues to an in-app demo confirmation. No payment or real order
+            will be submitted.
+          </p>
         </div>
       </div>
     </section>
