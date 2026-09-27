@@ -67,8 +67,8 @@ export function WorkspaceConfigurator() {
   }
 
   return (
-    <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(380px,0.95fr)] xl:gap-14">
-      <div className="order-2 space-y-8 lg:order-1">
+    <div className="grid min-w-0 grid-cols-[minmax(0,1fr)] items-start gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(380px,0.95fr)] xl:gap-14">
+      <div className="order-2 min-w-0 space-y-8 lg:order-1">
         {categories.map((category) => (
           <CatalogSection
             key={category}
@@ -89,7 +89,7 @@ export function WorkspaceConfigurator() {
       </div>
 
       <aside
-        className="order-1 lg:sticky lg:top-8 lg:order-2"
+        className="order-1 min-w-0 lg:sticky lg:top-8 lg:order-2"
         aria-labelledby="preview-heading"
       >
         <h2 id="preview-heading" className="sr-only">
@@ -97,7 +97,7 @@ export function WorkspaceConfigurator() {
         </h2>
         <WorkspacePreview desk={desk} chair={chair} accessories={accessories} />
         <div className="mx-2 -mt-3 rounded-b-[1.5rem] border border-t-0 border-slate-200 bg-white px-5 pb-5 pt-7 shadow-sm sm:px-6">
-          <div className="flex items-start justify-between gap-6">
+          <div className="flex flex-col items-start gap-3 sm:flex-row sm:justify-between sm:gap-6">
             <div>
               <p className="text-xs font-bold uppercase tracking-[0.16em] text-emerald-800">
                 Current selection
@@ -106,7 +106,11 @@ export function WorkspaceConfigurator() {
                 Your monthly workspace
               </h2>
             </div>
-            <div className="text-right" aria-live="polite" aria-atomic="true">
+            <div
+              className="text-left sm:text-right"
+              aria-live="polite"
+              aria-atomic="true"
+            >
               <p className="text-2xl font-bold tracking-tight">${monthlyTotal}</p>
               <p className="text-xs text-slate-500">estimated / month</p>
             </div>

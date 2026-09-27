@@ -15,8 +15,8 @@ type WorkspaceReviewProps = {
 
 function ReviewItem({ item }: { item: CatalogItem }) {
   return (
-    <li className="flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-3 sm:p-4">
-      <span className="flex size-16 shrink-0 items-center justify-center rounded-xl bg-[#f1f0eb] p-2">
+    <li className="grid min-w-0 grid-cols-[56px_minmax(0,1fr)] items-center gap-x-3 gap-y-1 rounded-2xl border border-slate-200 bg-white p-3 sm:grid-cols-[64px_minmax(0,1fr)] sm:gap-x-4 sm:p-4">
+      <span className="row-span-2 flex size-14 items-center justify-center rounded-xl bg-[#f1f0eb] p-2 sm:size-16">
         <ItemIcon kind={item.kind} color={item.color} />
       </span>
       <span className="min-w-0 flex-1">
@@ -27,7 +27,7 @@ function ReviewItem({ item }: { item: CatalogItem }) {
           {item.description}
         </span>
       </span>
-      <span className="shrink-0 text-sm font-bold text-emerald-800">
+      <span className="col-start-2 text-sm font-bold text-emerald-800">
         ${item.monthlyPrice}/mo
       </span>
     </li>
@@ -44,7 +44,7 @@ export function WorkspaceReview({
   onBack,
 }: WorkspaceReviewProps) {
   return (
-    <section aria-labelledby="review-heading">
+    <section aria-labelledby="review-heading" className="min-w-0">
       <div className="mb-8 flex flex-col items-start justify-between gap-5 sm:flex-row sm:items-end">
         <div>
           <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-emerald-800">
@@ -72,11 +72,11 @@ export function WorkspaceReview({
         </button>
       </div>
 
-      <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,0.9fr)_minmax(420px,1.1fr)] xl:gap-12">
+      <div className="grid min-w-0 grid-cols-[minmax(0,1fr)] items-start gap-8 lg:grid-cols-[minmax(0,0.9fr)_minmax(420px,1.1fr)] xl:gap-12">
         <WorkspacePreview desk={desk} chair={chair} accessories={accessories} />
 
-        <div className="rounded-[1.75rem] border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
-          <div className="flex items-start justify-between gap-5 border-b border-slate-100 pb-5">
+        <div className="min-w-0 rounded-[1.75rem] border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+          <div className="flex flex-col items-start gap-3 border-b border-slate-100 pb-5 sm:flex-row sm:justify-between sm:gap-5">
             <div>
               <p className="text-xs font-bold uppercase tracking-[0.16em] text-emerald-800">
                 Selected items
@@ -85,7 +85,7 @@ export function WorkspaceReview({
                 Monthly rental estimate
               </h3>
             </div>
-            <div className="text-right">
+            <div className="text-left sm:text-right">
               <p className="text-3xl font-bold tracking-tight text-slate-950">
                 ${monthlyTotal}
               </p>

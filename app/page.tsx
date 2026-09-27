@@ -17,7 +17,7 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-[1440px] px-5 py-10 sm:px-8 sm:py-14 lg:px-12">
+      <main className="mx-auto w-full min-w-0 max-w-[1440px] px-5 py-10 sm:px-8 sm:py-14 lg:px-12">
         <div className="mb-10 max-w-2xl">
           <p className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-emerald-800">
             Workspace rental
